@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import os
 from argparse import ArgumentParser
 from .atsobjs import loadObjects, AtsObject
 
@@ -14,9 +15,8 @@ gates = [
     "Clispau IX"
 ]
 
-def get_best_route(atsdb:str, source:str, dest:str) -> str:
+def get_best_route(ats_objects:dict, source:str, dest:str) -> str:
     """ Returns the best route based on distance """
-    ats_objects = loadObjects(atsdb)
     dest_obj = None
     source_obj = None
     for k, v in ats_objects.items():
@@ -70,7 +70,10 @@ def best_route():
     args = parser.parse_args()
     if not args.source or not args.dest:
         raise ValueError("This requires both source and dest to be provided, at least one is missing")
-    print(get_best_route("data/atsdata.json", args.source, args.dest))
+    fpath = os.path.dirname(os.path.abspath(__file__))
+    dbpath = os.path.join(fpath, "data/atsdata.json")
+    ats_objects = loadObjects(dbpath)
+    print(get_best_route(ats_objects, args.source, args.dest))
     
 
 if __name__ == "__main__":

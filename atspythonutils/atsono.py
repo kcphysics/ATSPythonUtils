@@ -1,4 +1,5 @@
 import sys
+import os
 from argparse import ArgumentParser
 from .atsobjs import loadObjects, AtsObject
 
@@ -20,7 +21,9 @@ def get_ono():
     args = parser.parse_args()
     if not args.target:
         raise ValueError("No target was given")
-    ats_objects = loadObjects('data/atsdata.json')
+    fpath = os.path.dirname(os.path.abspath(__file__))
+    dbpath = os.path.join(fpath, "data/atsdata.json")
+    ats_objects = loadObjects(dbpath)
     target_key = [v for k,v in ats_objects.items() if args.target.lower() in k.lower()]
     if len(target_key) > 1:
         raise ValueError("Found more then one candidate for {}, please specify more of the name".format(args.target))

@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="atspythonutils",
+    version="0.1.0",
     description="An API to make some game utilites for TrekMUSH: Among The Stars available via HTTP",
     url="https://github.com/kcphysics/ATSPythonUtils",
     author="KCPhysics",
