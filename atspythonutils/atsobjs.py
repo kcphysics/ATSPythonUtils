@@ -4,12 +4,16 @@ import os
 import json
 import math
 from argparse import ArgumentParser
+from collections import namedtuple
+
+Point = namedtuple('Point', ['x', 'y', 'z'])
 
 class AtsObject(object):
-  def __init__(self, cochranes: str="", market: int=0, name: str="", x:int=0, y:int=0, z:int=0, **kwargs):
+  def __init__(self, cochranes: str="", market:float=0, name: str="", x:float=0, y:float=0, z:float=0, **kwargs):
     self.market=market
     self.cochranes=cochranes
     self.name = name
+    self.location = Point(x, y, z)
     self.x = x
     self.y = y
     self.z = z
@@ -19,7 +23,7 @@ class AtsObject(object):
     self.type = kwargs.get("otype", "Not Known")
     self.empire = kwargs.get("empire", "Not Known")
 
-  def distFromCoords(self, x:int, y:int, z:int):
+  def distFromCoords(self, x:float, y:float, z:float):
     """Calculates distance from an arbitrary object"""
     nx = self.x - x
     ny = self.y - y
@@ -31,7 +35,7 @@ class AtsObject(object):
     """ Calculates distance from object """
     return self.distFromCoords(obj.x, obj.y, obj.z)
 
-  def distInRadius(self, obj, r:int):
+  def distInRadius(self, obj, r:float):
     """ Returns the distance if the object is within a given radius r """
     d = self.distFromObject(obj)
     if d <= r:
@@ -64,6 +68,21 @@ def loadObjects(fname: str) -> dict:
       for y in x.get(z, []):
         obj = AtsObject(empire=x.get("name"), otype=z, **y)
         ats_objects[obj.name] = obj
+  
+  return ats_objects
+
+def loadBorders(fname: str) -> dict:
+  """ Loads borders, which also are the basis of coord frames """
+  if not os.path.isfile(fname):
+    raise IOError("ATS Data file {} does not exist".format(fname))
+  ats_objects = {}
+  with open(fname, 'r') as f:
+    data = json.loads(f.read())
+  
+  for x in data['ATS_Navcomp_DB']['empires']:
+    for z in ['borders']:
+      for y in x.get(z, []):
+        ats_objects[y.get('name')] = Point(y.get('x'), y.get('y'), y.get('z'))
   
   return ats_objects
 
