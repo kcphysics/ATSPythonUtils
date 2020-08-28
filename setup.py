@@ -15,7 +15,8 @@ setup(
     entry_points={
         "console_scripts": [
             "atsono=atspythonutils.atsono:get_ono",
-            "atsbestroute=atspythonutils.atsflightplan:best_route"
+            "atsbestroute=atspythonutils.atsflightplan:best_route",
+            "atspdest=atspythonutils.atsheadings:get_objects_on_line"
         ]
     },
     zip_safe=False,
