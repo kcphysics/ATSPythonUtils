@@ -39,8 +39,8 @@ def get_ono():
         "Name of Object",
         "Empire",
         "Type",
-        "Distance (PC)",
-        "Time"
+        "Time (Duration)",
+        "Distance (PC)"
     ))
     print("=" * 100)
     for _,x in psinr:

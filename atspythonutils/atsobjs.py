@@ -22,18 +22,23 @@ class AtsObject(object):
     self.y = y
     self.z = z
     if cochranes=="" and kwargs['cochrenes']:
-      self.cochranes = float(kwargs.get('cochrenes', COCHRANES))
+      self.cochranes = float(kwargs.get('cochrenes', AVG_COCHRANE_DENSITY))
     self.dist = None
     self.type = kwargs.get("otype", "Not Known")
     self.empire = kwargs.get("empire", "Not Known")
 
   def timeToObject(self, target, speed:float, dist:float = None):
     """ Calculates the average cocharanges then converts to parsecs/s """
-    avg_cochranes = (self.cochranes + target.cochranes) / 2.0
-    velocity = speed ** 3.3333 * avg_cochranes * LIGHTSPEED / PARSEC 
     if not dist:
       dist = self.distFromObject(target)
+    return self.timeToDist(speed, dist, target.cochranes)
+
+  def timeToDist(self, speed, dist, cochranes=AVG_COCHRANE_DENSITY):
+    """ Calculates time to a distance """
+    avg_cochranes = (self.cochranes + cochranes) / 2.0
+    velocity = speed ** 3.3333 * avg_cochranes * LIGHTSPEED / PARSEC 
     return dist / velocity 
+
 
   def distFromCoords(self, x:float, y:float, z:float):
     """Calculates distance from an arbitrary object"""

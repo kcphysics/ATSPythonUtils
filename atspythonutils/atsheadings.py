@@ -6,6 +6,7 @@ I have worked most of the math out on my own, but I will maintain parity with th
 import pdb
 import os
 import math
+from datetime import timedelta
 from argparse import ArgumentParser
 from collections import namedtuple
 from .atsobjs import Point, loadObjects, loadBorders
@@ -40,7 +41,7 @@ def bourkian_determinant(p1: Point, p2: Point, s: Point, sd:float=1) -> bool:
     bourke = b ** 2 - 4 * a * c
     return bourke >= 0
 
-def findobjectsalongline(x:float, y:float, z:float, yaw:float, pitch:float, atsobjects:dict, atsborders:dict , frame:str = None, distance:float = 1000.0) -> list:
+def findobjectsalongline(x:float, y:float, z:float, yaw:float, pitch:float, atsobjects:dict, atsborders:dict , frame:str = None, speed:float = 16, distance:float = 1000.0) -> list:
     """ Returns a list of objects along a line """
     source = Point(x, y, z)
     if frame:
@@ -56,7 +57,8 @@ def findobjectsalongline(x:float, y:float, z:float, yaw:float, pitch:float, atso
         d = obj.distFromCoords(source.x, source.y, source.z) 
         if d < 50:
             continue
-        yield d, obj
+        t = str(timedelta(seconds=obj.timeToDist(speed, d)))
+        yield d, t, obj
     return
 
 def get_objects_on_line():
@@ -66,6 +68,7 @@ def get_objects_on_line():
     parser.add_argument("z", type=float, help="Z Value in the Galactic Coordinate Frame")
     parser.add_argument("yaw", type=float, help="Yaw value of heading")
     parser.add_argument("pitch", type=float, help="Pitch value of heading")
+    parser.add_argument("--speed", type=float, help="Speed at which the object was moving", default=16)
     parser.add_argument("--frame", help="Frame, should be one of these (as of v2.18 of the db)", choices=["Cardassian", "CU-Iure", "CU-Kakra", "Federation", "Talos Exclusion Zone", "Bajoran", "Breen", "Klingon", "KE-Beeble", "KE-Narendra", "KE-QIT", "KE-Hunt", "Romulan", "GFA", "Orion", "Dominion", "Tholian", "Qvarne", "Gorn"])
     args = parser.parse_args()
     fpath = os.path.dirname(os.path.abspath(__file__))
@@ -76,8 +79,8 @@ def get_objects_on_line():
         args.x, args.y, args.z,
         args.yaw, args.pitch
     ))
-    for _, obj in findobjectsalongline(args.x, args.y, args.z, args.yaw, args.pitch, ats_objects, ats_borders, args.frame):
-        print(obj.name)
+    for d, t, obj in findobjectsalongline(args.x, args.y, args.z, args.yaw, args.pitch, ats_objects, ats_borders, speed=args.speed, frame=args.frame):
+        print("{0:20s}\t{1:20s}\t[{2:<.2f}]".format(obj.name, t, d))
     print("Complete")
 
 if __name__ == "__main__":
