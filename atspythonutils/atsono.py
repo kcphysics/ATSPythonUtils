@@ -1,5 +1,6 @@
 import sys
 import os
+from datetime import timedelta
 from argparse import ArgumentParser
 from .atsobjs import loadObjects, AtsObject
 
@@ -16,8 +17,9 @@ def get_nearby_objects(ats_objects: dict, target: AtsObject, radius: int=200, nr
 def get_ono():
     parser = ArgumentParser(prog="Object Distance Calculator")
     parser.add_argument("--target", help="Partial name of Source")
-    parser.add_argument("--radius", help="Radius to look in", default=100)
-    parser.add_argument("--nres", help="Number of results", default=20)
+    parser.add_argument("--radius", help="Radius to look in", default=100, type=float)
+    parser.add_argument("--nres", help="Number of results", default=20, type=float)
+    parser.add_argument("--speed", help="Speed you are travelling at", default=16, type=float)
     args = parser.parse_args()
     if not args.target:
         raise ValueError("No target was given")
@@ -33,18 +35,20 @@ def get_ono():
     # target = [x for x in planets if args.target.lower() in x.name.lower()][0]
     psinr = get_nearby_objects(ats_objects, target)
     print("The {} closest objects to {}".format(args.nres, target.name))
-    print("{0:<25s}\t{1:15s}\t{2:10s}\t{3:10s}".format(
+    print("{0:<25s}\t{1:15s}\t{2:10s}\t{3:10s}\t{4:20s}".format(
         "Name of Object",
         "Empire",
         "Type",
-        "Distance (PC)"
+        "Distance (PC)",
+        "Time"
     ))
-    print("=" * 80)
+    print("=" * 100)
     for _,x in psinr:
-        print("{0:<25s}\t{1:15s}\t{2:10s}\t[{3:>.2f}]".format(
+        print("{0:<25s}\t{1:15s}\t{2:10s}\t{3:20s}\t[{4:>.2f}]".format(
         x.name,
         x.empire,
         x.type,
+        str(timedelta(seconds=target.timeToObject(x, args.speed, dist=x.dist))),
         x.dist
         ))
   

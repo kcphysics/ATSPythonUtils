@@ -8,6 +8,10 @@ from collections import namedtuple
 
 Point = namedtuple('Point', ['x', 'y', 'z'])
 
+PARSEC = 3085659622.014257
+LIGHTSPEED = 29.979246
+AVG_COCHRANE_DENSITY = 1298.737508
+
 class AtsObject(object):
   def __init__(self, cochranes: str="", market:float=0, name: str="", x:float=0, y:float=0, z:float=0, **kwargs):
     self.market=market
@@ -18,10 +22,18 @@ class AtsObject(object):
     self.y = y
     self.z = z
     if cochranes=="" and kwargs['cochrenes']:
-      self.cochranes = kwargs.get('cochrenes')
+      self.cochranes = float(kwargs.get('cochrenes', COCHRANES))
     self.dist = None
     self.type = kwargs.get("otype", "Not Known")
     self.empire = kwargs.get("empire", "Not Known")
+
+  def timeToObject(self, target, speed:float, dist:float = None):
+    """ Calculates the average cocharanges then converts to parsecs/s """
+    avg_cochranes = (self.cochranes + target.cochranes) / 2.0
+    velocity = speed ** 3.3333 * avg_cochranes * LIGHTSPEED / PARSEC 
+    if not dist:
+      dist = self.distFromObject(target)
+    return dist / velocity 
 
   def distFromCoords(self, x:float, y:float, z:float):
     """Calculates distance from an arbitrary object"""
