@@ -16,7 +16,8 @@ setup(
         "console_scripts": [
             "atsono=atspythonutils.atsono:get_ono",
             "atsbestroute=atspythonutils.atsflightplan:best_route",
-            "atspdest=atspythonutils.atsheadings:get_objects_on_line"
+            "atspdest=atspythonutils.atsheadings:get_objects_on_line",
+            "atspdestobj=atspythonutils.atsheadings:get_objects_on_line_from_object"
         ]
     },
     zip_safe=False,
