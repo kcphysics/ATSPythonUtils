@@ -68,7 +68,8 @@ class AtsObject(object):
       "y": self.y,
       "z": self.z,
       "type": self.type,
-      "cochranes": self.cochranes
+      "cochranes": self.cochranes,
+      "market": self.market
     }
 
 
